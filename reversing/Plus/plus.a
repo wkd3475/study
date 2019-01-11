@@ -5,18 +5,17 @@
 	.globl	_main
 	.def	_main;	.scl	2;	.type	32;	.endef
 _main:
-	push	ebp
-	mov	ebp, esp
-	and	esp, -16
-	sub	esp, 16
-	call	___main
-	mov	DWORD PTR [esp+12], 1
-	mov	DWORD PTR [esp+8], 3
-	mov	edx, DWORD PTR [esp+12]
-	mov	eax, DWORD PTR [esp+8]
-	add	eax, edx
-	mov	DWORD PTR [esp+4], eax
-	nop
-	leave
-	ret
+	push	ebp 			-> 스택에 4byte 공간을 할당하고 ebp값을 넣는다. main함수가 끝나고 돌아갈 곳의 주소를 스택에 저장하는 것
+	mov	ebp, esp 		-> set ebp = esp
+	sub	esp, 12			-> esp = esp - 12
+	call	___main			-> ___main 함수 호출
+	mov	DWORD PTR [ebp-4], 1	-> [ebp-4]의 값을 메모리 주소로 써서 해당 위치의 값에 1을 복사
+	mov	DWORD PTR [ebp-8], 3	-> [ebp-8]의 값을 메모리 주소로 써서 해당 위치의 값에 3을 복사
+	mov	edx, DWORD PTR [ebp-4]	-> [ebp-4]에 저장한 값을 edx에 복사
+	mov	eax, DWORD PTR [ebp-8]	-> [ebp-8]에 저장한 값을 eax에 복사
+	add	eax, edx		-> 더하기
+	mov	DWORD PTR [ebp-12], eax	-> [ebp-12]의 값을 메모리 주소로 쓰는 위치의 값에 결과를 복사
+	nop				-> 특별한 명령을 수행하는 명령어가 아님
+	leave				-> 스택의 끝을 뜻하는 esp를 ebp로 옮기고 ebp를 pop하여 앞에서 push ebp를 통해 저장해둔 sfp를 다시 ebp에 저장한다.
+	ret				-> call로 호출 된 ___main 함수를 종료하고 call 다음의 명령줄로 이동
 	.ident	"GCC: (i686-posix-dwarf-rev0, Built by MinGW-W64 project) 8.1.0"
