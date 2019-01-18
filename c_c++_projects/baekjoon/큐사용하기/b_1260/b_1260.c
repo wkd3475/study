@@ -14,16 +14,6 @@ struct Queue {
     int size;
 };
 
-struct Stack {
-    struct StackNode *top;
-    int size;
-};
-
-struct StackNode {
-    int n;
-    struct StackNode *prev;
-};
-
 void initQueue(struct Queue *queue);
 void enqueue(struct Queue *queue, int x);
 int dequeue(struct Queue *queue);
@@ -32,27 +22,76 @@ int isEmptyQueue(struct Queue *queue);
 int frontQueue(struct Queue *queue);
 int backQueue(struct Queue *queue);
 
-void initStack(struct Stack *stack);
-void push(struct Stack *stack, int x);
-int isEmptyStack(struct Stack *stack);
-int pop(struct Stack *stack);
-int sizeStack(struct Stack *stack);
-int topStack(struct Stack *stack);
+void DFS(int **a, int DFSvisit[], int v, int n);
+void BFS(int **a, int DFSvisit[], int v, int n);
 
 int main() {
-    struct Queue *queue;
-    initQueue(queue);
-    struct Stack *stack;
-    initStack(stack);
-
     int N, M, V;
+    int x, y;
+    int **a;
+    
+   
+    int DFSvisit[1001]={0};
+    int BFSvisit[1001]={0};
+
     scanf("%d %d %d", &N, &M, &V);
+
+    a = malloc(sizeof(int *)*(N+1));
+    for(int i=0; i<N+1; i++) {
+        a[i] = malloc(sizeof(int)*(N+1));
+    }
+
+     
+    for(int i=0; i<N; i++) {
+        for(int j=0; j<N; j++) {
+            a[i][j]=0;
+        }
+    }
+
+    for(int i=0; i<M; i++) {
+        scanf("%d %d", &x, &y);
+        a[x][y] = a[y][x] = 1;
+    }
+
+    DFS(a, DFSvisit, V, N);
+    printf("\n");
+    BFS(a, BFSvisit, V, N);
     
     return 0;
 }
 
+void DFS(int **a, int DFSvisit[], int v, int n) {
+    DFSvisit[v] = 1;
+    printf("%d ", v);
+    for(int i=1; i<=n; i++) {
+        if(a[v][i]==1 && DFSvisit[i]==0) {
+            DFS(a, DFSvisit, i, n);
+        }
+    }
+}
+
+void BFS(int **a, int BFSvisit[], int v, int n) {
+    int val;
+    struct Queue *queue;
+    queue = (struct Queue*)malloc(sizeof(struct Queue));
+    initQueue(queue);
+    enqueue(queue, v);
+    BFSvisit[v] = 1;
+
+    while(!isEmptyQueue(queue)) {
+        val = dequeue(queue);
+        printf("%d ", val);
+
+        for(int i=1; i<=n; i++) {
+            if(a[val][i]==1 && BFSvisit[i]==0) {
+                enqueue(queue, i);
+                BFSvisit[i] = 1;
+            }
+        }
+    }
+}
+
 void initQueue(struct Queue *queue) {
-    queue = (struct Queue*)malloc(sizeof(struct Queue*));
     queue->size=0;
     queue->head=NULL;
     queue->tail=NULL;
@@ -65,7 +104,7 @@ void enqueue(struct Queue *queue, int x) {
     node->prev = queue->tail;
     node->next = NULL;
     
-    if(isEmpty(queue)) {
+    if(isEmptyQueue(queue)) {
         queue->head = node;
     }
     else {
@@ -77,8 +116,8 @@ void enqueue(struct Queue *queue, int x) {
 
 int dequeue(struct Queue *queue) {
     int val;
-    if(isEmpty(queue)) return -1;
-    else if(size(queue)==1) {
+    if(isEmptyQueue(queue)) return -1;
+    else if(sizeQueue(queue)==1) {
         val = queue->head->n;
         queue->head = NULL;
         queue->tail = NULL;
@@ -103,52 +142,11 @@ int isEmptyQueue(struct Queue *queue) {
 }
 
 int frontQueue(struct Queue *queue) {
-    if(isEmpty(queue)) return -1;
+    if(isEmptyQueue(queue)) return -1;
     else return queue->head->n;
 }
 
 int backQueue(struct Queue *queue) {
-    if(isEmpty(queue)) return -1;
+    if(isEmptyQueue(queue)) return -1;
     else return queue->tail->n;
-}
-
-void initStack(struct Stack *stack) {
-    stack = (struct Stack*)malloc(sizeof(struct Stack*));
-    stack->size = 0;
-    stack->top = NULL;
-}
-
-void push(struct Stack *stack, int x) {
-    struct StackNode *node;
-    node = malloc(sizeof(struct StackNode));
-    node->n = x;
-    node->prev = stack->top;
-    stack->top = node;
-    stack->size ++;
-}
-
-int isEmptyStack(struct Stack *stack) {
-    if(stack->size > 0) return 0;
-    else return 1;
-}
-
-int pop(struct Stack *stack) {
-    if(!empty(stack)) {
-        int n = stack->top->n;
-        stack->top = stack->top->prev;
-        stack->size --;
-        return n;
-    }
-    else return -1;
-}
-
-int sizeStack(struct Stack *stack) {
-    return stack->size;
-}
-
-int topStack(struct Stack *stack) {
-    if(empty(stack)) return -1;
-    else {
-        return stack->top->n;
-    }
 }
