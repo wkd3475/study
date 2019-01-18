@@ -37,7 +37,7 @@ int main() {
         
         if(!strcmp(string, "push")) {
             int x;
-            scanf("%s", &x);
+            scanf("%d", &x);
             push(queue, x);
         }
         else if(!strcmp(string, "pop")) {
@@ -75,6 +75,9 @@ void push(struct Queue *queue, int x) {
     if(isEmpty(queue)) {
         queue->head = node;
     }
+    else {
+        queue->tail->next = node;
+    }
     queue->tail = node;
     queue->size++;
 }
@@ -89,7 +92,7 @@ int pop(struct Queue *queue) {
         queue->size --;
     }
     else {
-        val = queue->tail->n;
+        val = queue->head->n;
         queue->head = queue->head->next;
         queue->size --;
     }
