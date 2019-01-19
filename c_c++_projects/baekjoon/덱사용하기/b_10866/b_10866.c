@@ -115,7 +115,8 @@ void push_back(Deque *deque, int x) {
 
 int pop_front(Deque *deque) {
     if(isEmpty(deque)) return -1;
-
+    
+    Node *temp = deque->head;
     int val = deque->head->n;
 
     if(size(deque)==1) {
@@ -127,6 +128,7 @@ int pop_front(Deque *deque) {
         deque->head->prev = NULL;
     }
     deque->size --;
+    free(temp);
 
     return val;
 }
@@ -134,6 +136,7 @@ int pop_front(Deque *deque) {
 int pop_back(Deque *deque) {
     if(isEmpty(deque)) return -1;
 
+    Node *temp = deque->tail;
     int val = deque->tail->n;
 
     if(size(deque)==1) {
@@ -145,7 +148,7 @@ int pop_back(Deque *deque) {
         deque->tail->next = NULL;
     }
     deque->size --;
-
+    free(temp);
     return val;
 }
 
